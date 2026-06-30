@@ -9,15 +9,14 @@ function Square({ value, onSquareClick }) {
   );
 }
 
-export default function Board() {
+function Board() {
   const [xIsNext, setXIsNext] = useState(true);
   const [squares, setSquares] = useState(Array(9).fill(null));
   function handleClick(i) {
-    // 이미 값이 있다면(유저가 땅을 먹음, null이 아님 true)
-    if (squares[i]) {
+    // 승자가 있거나 이미 값이 있는 타일이라면
+    if (squares[i] || calculateWinner(squares)) {
       return;
     }
-    // 승자 결정하기
     const nextSquares = squares.slice(); // slice() 배열 복사해서 새 배열 생성
     if (xIsNext) {
       nextSquares[i] = "X";
@@ -27,8 +26,17 @@ export default function Board() {
     setSquares(nextSquares);
     setXIsNext(!xIsNext);
   }
+
+  const winner = calculateWinner(squares);
+  let status;
+  if (winner) {
+    status = "Winner: " + winner;
+  } else {
+    status = "Next player: " + (xIsNext ? "X" : "O");
+  }
   return (
     <>
+      <div className="status">{status}</div>
       <div className="board-row">
         <Square value={squares[0]} onSquareClick={() => handleClick(0)} />
         <Square value={squares[1]} onSquareClick={() => handleClick(1)} />
@@ -45,6 +53,19 @@ export default function Board() {
         <Square value={squares[8]} onSquareClick={() => handleClick(8)} />
       </div>
     </>
+  );
+}
+
+export default function Game() {
+  return (
+    <div className="game">
+      <div className="game-board">
+        <Board />
+      </div>
+      <div className="game-info">
+        <ol>{/* TODO */}</ol>
+      </div>
+    </div>
   );
 }
 
